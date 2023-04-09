@@ -41,14 +41,10 @@ app.post("/data", async (req, res) => {
     });
 })
 
+// this route is use to view output on webpage in html formet 
 app.get('/view', async (req, res) => {
     const output = await model.find();
-    // res.status(200).json({
-    //     success: true,
-    //     output
-    // });
     res.send(`<div><h1>${output[0].welcome_txt}</h1><p>${output[0].paragraph}</p></div> ${output}`)
-    // res.send(output)
 })
 
 app.listen(process.env.PORT || 4000, () => {
