@@ -1,9 +1,9 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require("mongoose");
-const schema=require('./schema')
+const schema = require('./schema')
 // to connect mongoDB with nodemon.js 
-mongoose.connect("mongodb://127.0.0.1:27017/myzertask", { useNewUrlParser: true, useUnifiedTopology: true })
+mongoose.connect("mongodb+srv://mobashir:mobashir123@cluster0.sv5dvda.mongodb.net/Grocery?retryWrites=true&w=majority", { useNewUrlParser: true, useUnifiedTopology: true })
     .then(() => {
         console.log("connected with mongodb");
     })
@@ -14,7 +14,7 @@ mongoose.connect("mongodb://127.0.0.1:27017/myzertask", { useNewUrlParser: true,
 const app = express();
 
 // creaded model to define collection in side the mongoDb 
-const model = new mongoose.model("data", schema);
+const model = new mongoose.model("myzer", schema);
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.json());
@@ -26,19 +26,29 @@ app.get('/', (req, res) => {
 })
 
 // data route where we can pass data through postman using http://localhost:4000/data 
-app.post("/data",async(req,res)=>{
+app.post("/data", async (req, res) => {
     const bodyData = req.body;
     const welcome_txt = bodyData.welcome_txt;
     const paragraph = bodyData.paragraph;
-    console.log(welcome_txt,paragraph);
+    console.log(welcome_txt, paragraph);
 
     const output = await model.create({
-        welcome_txt,paragraph
+        welcome_txt, paragraph
     });
     res.status(200).json({
         success: true,
         output
-    })
+    });
+})
+
+app.get('/view', async (req, res) => {
+    const output = await model.find();
+    // res.status(200).json({
+    //     success: true,
+    //     output
+    // });
+    res.send(`<div><h1>${output[0].welcome_txt}</h1><p>${output[0].paragraph}</p></div> ${output}`)
+    // res.send(output)
 })
 
 app.listen(process.env.PORT || 4000, () => {
